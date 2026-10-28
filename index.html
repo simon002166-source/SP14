@@ -1066,10 +1066,11 @@
       });
 
       // 載入優雅清楚的 CARTO Voyager 瓦片圖層
-	L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-  	  maxZoom: 16,
-  	  attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
-	}).addTo(map);
+		L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4wqj_1_b03a238313251311c36f6486', {
+  		  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+  	 	  subdomains: 'abcd',
+  		  maxZoom: 19
+		}).addTo(map);
 
       // 標註 Marker
       Object.keys(CITY_DATA).forEach(key => {
