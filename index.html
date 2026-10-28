@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吉光西葡 14 日：行程／車程／飯店全通盤＋互動地圖</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            iberian: {
+              clay: '#C85A32',
+              claylight: '#F8ECE7',
+              navy: '#1B2A4A',
+              navylight: '#273C66',
+              gold: '#D4AF37',
+              goldlight: '#FCF7E8',
+              olive: '#3E5C48',
+              olivelight: '#EFF5F1',
+              cream: '#FAF7F2'
+            }
+          },
+          fontFamily: {
+            serif: ['"Noto Serif TC"', 'serif'],
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+            heading: ['Cinzel', '"Noto Serif TC"', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF7F2;
+      color: #2D3748;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .hero-pattern {
+      background-color: #1B2A4A;
+      background-image: radial-gradient(rgba(212, 175, 55, 0.18) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+    .badge-blur {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .trip-card {
+      transition: all 0.25s ease-in-out;
+    }
+    .trip-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.08), 0 8px 12px -4px rgba(0, 0, 0, 0.04);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Leaflet 自訂 Marker 外觀 */
+    .custom-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 9999px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border: 2px solid #ffffff;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .custom-marker:hover {
+      transform: scale(1.22);
+      z-index: 999 !important;
+    }
+    /* Leaflet Popup 美化 */
+    .leaflet-popup-content-wrapper {
+      border-radius: 16px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    .leaflet-popup-content {
+      margin: 0;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .leaflet-popup-tip {
+      background: white;
+    }
+    /* 飛行軌跡閃爍動畫 */
+    @keyframes dashMove {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+    .flight-path {
+      stroke-dasharray: 8, 8;
+      animation: dashMove 2s linear infinite;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-iberian-clay selection:text-white">
+
+  <!-- ==================== HERO HEADER ==================== -->
+  <header class="hero-pattern relative text-white border-b-4 border-iberian-gold overflow-hidden">
+    <div class="absolute -top-32 -right-32 w-96 h-96 bg-iberian-clay/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-20 w-80 h-80 bg-iberian-gold/15 rounded-full blur-2xl pointer-events-none"></div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-iberian-gold border border-iberian-gold/30 text-xs sm:text-sm font-medium mb-4 badge-blur tracking-wider">
+        <i class="fa-solid fa-map-location-dot text-iberian-gold"></i> 伊比利雙國精華全覽導讀・互動路徑圖
+      </div>
+
+      <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white mb-4 leading-tight">
+        吉光西葡 <span class="text-iberian-gold font-normal">14</span> 日
+      </h1>
+      <p class="text-base sm:text-xl font-light text-slate-200 tracking-wide max-w-2xl mx-auto">
+        白話版行程・精算車程・五星連泊與國營旅館全盤拆解
+      </p>
+
+      <!-- 快速亮點指標卡片 -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto mt-8 text-left">
+        <div class="bg-white/10 p-3.5 rounded-xl border border-white/10 backdrop-blur-sm">
+          <p class="text-[11px] text-amber-200 font-semibold tracking-wider">階段一・葡萄牙</p>
+          <p class="text-base sm:text-lg font-bold mt-0.5 text-white">里斯本 3 連泊</p>
+          <span class="text-[11px] text-slate-300">完全免搬大行李</span>
+        </div>
+        <div class="bg-white/10 p-3.5 rounded-xl border border-white/10 backdrop-blur-sm">
+          <p class="text-[11px] text-amber-200 font-semibold tracking-wider">階段二・安達魯西亞</p>
+          <p class="text-base sm:text-lg font-bold mt-0.5 text-white">雙國營旅館</p>
+          <span class="text-[11px] text-slate-300">懸崖隆達 + 托雷多古城</span>
+        </div>
+        <div class="bg-white/10 p-3.5 rounded-xl border border-white/10 backdrop-blur-sm">
+          <p class="text-[11px] text-amber-200 font-semibold tracking-wider">階段三・關鍵交通</p>
+          <p class="text-base sm:text-lg font-bold mt-0.5 text-white">內陸航班直飛</p>
+          <span class="text-[11px] text-slate-300">省去 6 小時大巴拉車</span>
+        </div>
+        <div class="bg-white/10 p-3.5 rounded-xl border border-white/10 backdrop-blur-sm">
+          <p class="text-[11px] text-amber-200 font-semibold tracking-wider">階段三・加泰隆尼亞</p>
+          <p class="text-base sm:text-lg font-bold mt-0.5 text-white">巴塞 2 連泊</p>
+          <span class="text-[11px] text-slate-300">核心擴展區從容自由逛</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 互動行程地圖區塊 ==================== -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 sm:-mt-8 relative z-20">
+    <div class="bg-white rounded-3xl shadow-xl border border-stone-200/90 overflow-hidden">
+      <!-- 地圖頂部控制條 -->
+      <div class="p-4 sm:p-5 bg-gradient-to-r from-stone-900 via-slate-900 to-stone-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-stone-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-iberian-gold animate-pulse"></span>
+            <h2 class="font-serif font-bold text-lg sm:text-xl text-stone-100 flex items-center gap-2">
+              🗺️ 14 日跨國移動全覽路線圖
+            </h2>
+          </div>
+          <p class="text-xs text-stone-400 mt-0.5">點擊地標標籤可查看車程與住宿細節，或切換下方視角聚焦各階段！</p>
+        </div>
+
+        <!-- 視角切換按鈕組 -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <button onclick="zoomToStage('all')" class="map-view-btn px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white font-medium transition flex items-center gap-1 active:scale-95" data-stage="all">
+            <i class="fa-solid fa-earth-europe"></i> 全覽視角
+          </button>
+          <button onclick="zoomToStage('p1')" class="map-view-btn px-3 py-1.5 rounded-lg bg-blue-900/60 hover:bg-blue-800 text-blue-200 font-medium transition flex items-center gap-1 active:scale-95" data-stage="p1">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span> 葡萄牙
+          </button>
+          <button onclick="zoomToStage('p2')" class="map-view-btn px-3 py-1.5 rounded-lg bg-amber-900/60 hover:bg-amber-800 text-amber-200 font-medium transition flex items-center gap-1 active:scale-95" data-stage="p2">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span> 西班牙南部
+          </button>
+          <button onclick="zoomToStage('p3')" class="map-view-btn px-3 py-1.5 rounded-lg bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 font-medium transition flex items-center gap-1 active:scale-95" data-stage="p3">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 馬德里直飛巴塞
+          </button>
+        </div>
+      </div>
+
+      <!-- 地圖容器 -->
+      <div class="relative w-full h-[400px] sm:h-[480px] lg:h-[520px] bg-stone-100">
+        <div id="routeMap" class="w-full h-full"></div>
+
+        <!-- 地圖右下角圖例 -->
+        <div class="absolute bottom-4 right-4 z-[500] bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-lg border border-stone-200 text-xs space-y-1.5 pointer-events-auto max-w-[220px]">
+          <div class="font-bold text-slate-800 border-b border-stone-200 pb-1 flex items-center justify-between">
+            <span>圖例說明</span>
+            <i class="fa-solid fa-route text-slate-400"></i>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <span class="w-3 h-3 rounded-full bg-[#1B2A4A] inline-block flex-shrink-0"></span>
+            <span>階段一：葡萄牙舒緩</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <span class="w-3 h-3 rounded-full bg-[#C85A32] inline-block flex-shrink-0"></span>
+            <span>階段二：南部長征</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <span class="w-3 h-3 rounded-full bg-[#2A724F] inline-block flex-shrink-0"></span>
+            <span>階段三：雙都高第</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600 pt-0.5 border-t border-stone-100">
+            <span class="w-5 h-0.5 border-t-2 border-dashed border-[#2A724F] inline-block flex-shrink-0"></span>
+            <span class="text-[11px] font-semibold text-emerald-800">✈️ 馬德里直飛巴塞</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 浮動導覽列 (STICKY NAV) ==================== -->
+  <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm transition-all duration-300 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2 text-xs sm:text-sm font-medium w-full sm:w-auto">
+          <a href="#phase-1" class="phase-nav-btn whitespace-nowrap px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-iberian-clay hover:bg-stone-100 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-iberian-navy"></span>
+            階段一：葡國舒緩期 (D2-5)
+          </a>
+          <a href="#phase-2" class="phase-nav-btn whitespace-nowrap px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-iberian-clay hover:bg-stone-100 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-iberian-clay"></span>
+            階段二：南部大長征 (D5-10)
+          </a>
+          <a href="#phase-3" class="phase-nav-btn whitespace-nowrap px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-iberian-clay hover:bg-stone-100 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-iberian-olive"></span>
+            階段三：雙都與高第 (D10-13)
+          </a>
+        </div>
+        <button id="toggleAllBtn" class="hidden md:inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-iberian-navy px-3 py-1.5 rounded-lg border border-stone-200 bg-stone-50 transition">
+          <i class="fa-solid fa-arrows-up-down text-iberian-clay"></i> 展開/精簡全部細節
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== 主要每日行程內容 ==================== -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-16">
+
+    <!-- ==================== 階段一 ==================== -->
+    <section id="phase-1" class="scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b-2 border-iberian-navy gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-iberian-navy text-white flex items-center justify-center font-serif font-bold text-lg shadow-md">
+            01
+          </div>
+          <div>
+            <span class="text-xs font-bold tracking-widest text-iberian-navy uppercase">Stage 01</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-800">葡萄牙舒緩期 <span class="text-base sm:text-lg font-normal text-slate-500">（第 2 - 5 天）</span></h2>
+          </div>
+        </div>
+        <div class="text-xs sm:text-sm text-slate-500 font-medium">
+          里斯本 3 連泊・婚禮小鎮・羅卡角天涯海角
+        </div>
+      </div>
+
+      <!-- 體力特色提示框 (葡萄牙) -->
+      <div class="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 shadow-sm flex items-start gap-3.5">
+        <div class="p-2.5 bg-iberian-navy text-white rounded-xl text-lg flex-shrink-0 mt-0.5 shadow-sm">
+          <i class="fa-solid fa-bed"></i>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <span class="bg-blue-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">體力評級：最從容舒適</span>
+            <span class="text-xs text-blue-700 font-semibold">【超大優勢】</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-bold text-iberian-navy mt-1">
+            💡 里斯本 3 連泊，完全免搬行李！
+          </h3>
+          <p class="text-sm text-slate-600 mt-1 leading-relaxed">
+            第 2、3、4 晚皆連續入住 <strong class="text-slate-800">Corinthia Hotel Lisbon</strong> 或 <strong class="text-slate-800">Dom Pedro Lisboa</strong> 等市區精選五星級飯店。每天帶著輕便隨身小包出門，晚上回到同一間飯店洗漱休息，倒時差毫無壓力！
+          </p>
+        </div>
+      </div>
+
+      <!-- 階段一 每日卡片列表 -->
+      <div class="space-y-4">
+        <!-- 第 2 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day2">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 2 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">輕鬆調時差</span>
+                <button onclick="focusCity('lisbon')" class="text-xs text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-van-shuttle"></i> 機場接送至市區約 20-30 分鐘
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              抵達里斯本（Lisbon）・漫步大西洋海港之城
+            </h4>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-utensils text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">晚餐安排道地的葡萄牙傳統正宗 <span class="font-semibold text-iberian-clay">馬介休鱈魚風味料理</span>（Bacalhau），品嚐葡式靈魂國菜。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-navy mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">當晚住宿：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">里斯本市區五星（Corinthia Hotel 或 Dom Pedro），開箱整理免搬行李第 1 晚。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 3 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day3">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 3 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">免搬行李一日往返</span>
+                <button onclick="focusCity('obidos')" class="text-xs text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-bus"></i> 單程拉車約 1 小時 15 分鐘（當天輕鬆往返）
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              里斯本 → 歐比杜什（婚禮小鎮） → 返回里斯本
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              漫步在國王贈予皇后的白色童話小山城中，品嘗裝在巧克力杯裡的櫻桃甜酒（Ginjinha），當天往返毫無大行李負擔。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-utensils text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">中午於歐比杜什享用地方風味料理，感受淳樸的葡國鄉村滋味。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-navy mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">當晚住宿：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">續住里斯本同一五星飯店（第 2 晚連泊），原房續住最自在。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 4 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day4">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 4 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">歐洲最西端巡禮</span>
+                <button onclick="focusCity('sintra')" class="text-xs text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-route"></i> 里斯本→辛特拉約 40 分鐘 ｜ 辛特拉→羅卡角約 25 分鐘
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              里斯本 → 辛特拉（佩納宮） → 羅卡角（大西洋終點） → 返回里斯本
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              走訪如童話糖果屋般的浪漫佩納宮，接著站在「陸止於此、海始於斯」的大西洋岬角「羅卡角」，眺望浩瀚無際的浪潮，傍晚悠閒返回里斯本。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-music text-purple-600 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食與藝文饗宴：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">晚上在里斯本特別安排 <span class="font-bold text-purple-700">★百年葡式法朵（Fado）</span> 傳統怨曲命運之歌晚宴秀，傾聽葡式魂魄深處的旋律。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-navy mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">當晚住宿：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">里斯本第 3 晚連泊！享受完全不必每天收整皮箱的甜頭。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== 階段二 ==================== -->
+    <section id="phase-2" class="scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b-2 border-iberian-clay gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-iberian-clay text-white flex items-center justify-center font-serif font-bold text-lg shadow-md">
+            02
+          </div>
+          <div>
+            <span class="text-xs font-bold tracking-widest text-iberian-clay uppercase">Stage 02</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-800">西班牙南部名城大長征 <span class="text-base sm:text-lg font-normal text-slate-500">（第 5 - 10 天）</span></h2>
+          </div>
+        </div>
+        <div class="text-xs sm:text-sm text-slate-500 font-medium">
+          安達魯西亞魂・雙國營旅館・伊斯蘭文化極致
+        </div>
+      </div>
+
+      <!-- 體力與打包提醒 (警示框) -->
+      <div class="space-y-3 mb-6">
+        <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 border border-amber-200/80 shadow-sm flex items-start gap-3.5">
+          <div class="p-2.5 bg-amber-500 text-white rounded-xl text-lg flex-shrink-0 mt-0.5 shadow-sm">
+            <i class="fa-solid fa-person-walking-luggage"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="bg-amber-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">體力警示</span>
+              <span class="text-xs text-amber-800 font-bold">天天打包換飯店・燃燒體力的黃金收穫期</span>
+            </div>
+            <p class="text-sm text-amber-950 mt-1 leading-relaxed">
+              跨入安達魯西亞，每日景點飽滿、歷史底蘊深厚，每天抵達不同世界遺產古城，是全段景點含金量最高、體力消耗最快的時期！
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-5 rounded-2xl bg-rose-50 border-2 border-dashed border-rose-300 shadow-sm flex items-start gap-3.5">
+          <div class="p-2.5 bg-rose-600 text-white rounded-xl text-lg flex-shrink-0 mt-0.5">
+            <i class="fa-solid fa-suitcase-rolling"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="bg-rose-600 text-white text-[11px] font-black px-2 py-0.5 rounded uppercase">特別打包提醒</span>
+              <h3 class="text-base font-bold text-rose-900">第 5 晚大行李箱留車上，請備好「輕便過夜包」！</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-rose-800 mt-1.5 leading-relaxed">
+              <strong class="underline decoration-rose-400 font-bold">第 5 晚大行李箱將直接留在遊覽車上。</strong> 由於安達魯西亞古城多為地形起伏大、車輛不易駛入的狹窄石板路，這天請務必在後背包準備好「一晚用的輕便過夜包」（換洗衣物、盥洗備品與隨身藥物），就能優雅登記入住，免去在石板路上狼狽拖拉大箱子的困擾。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 階段二 每日卡片列表 -->
+      <div class="space-y-4">
+        <!-- 第 5 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day5">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 5 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200">跨國長拉車＋過夜包</span>
+                <button onclick="focusCity('seville')" class="text-xs text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full font-bold">
+                <i class="fa-solid fa-clock"></i> 今日拉車最長：高達 4.5 小時
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              里斯本 → 跨國長途拉車（途經鷹巢之村馬爾旺） → 塞維亞（西班牙南部）
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              今日拉車時間最長，中途特別經過如老鷹般高踞巨岩上的葡萄牙鷹巢之村「馬爾旺（Marvão）」，稍作歇息俯瞰邊境壯闊美景，下午直抵安達魯西亞首府塞維亞。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-bag-shopping text-rose-500 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">行李注意事項：</span>
+                  <p class="text-rose-600 text-xs sm:text-sm mt-0.5 font-medium">使用輕便隨身過夜包辦理入住，大行李安全存於大巴行李廂。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">當晚住宿：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">塞維亞市區頂級飯店。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 6 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day6">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 6 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">南部唯一不搬行李日</span>
+                <button onclick="focusCity('seville')" class="text-xs text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-person-walking"></i> 景點皆在市區，以步行與局部接駁為主
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              塞維亞一日全覽（大教堂入內、西班牙廣場）
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              入內造訪壯觀的塞維亞大教堂與希拉達塔，漫步在氣勢磅礡的西班牙廣場，細賞每座代表西班牙行省的彩瓷壁畫長椅。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-fire text-amber-600 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食與藝術饗宴：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">晚上觀賞最熱情的 <span class="font-bold text-amber-700">★安達魯西亞佛朗明哥（Flamenco）</span> 傳統舞蹈秀，近距離感受靈魂拍打與踢踏震撼。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">當晚住宿：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">續住塞維亞同一家飯店（南部長征期唯一不搬行李的一晚！）。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 7 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden border-l-4 border-l-iberian-gold" id="card-day7">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 7 天</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">★ 隆達懸崖國營旅館</span>
+                <button onclick="focusCity('ronda')" class="text-xs text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-bus"></i> 拉車約 2 小時
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              塞維亞 → 隆達（海明威筆下的懸崖山城）
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              造訪聳立在太加斯深谷之上的白色懸崖城鎮，站在連接新舊城區的「新橋」上，俯瞰百米深淵與險峻絕壁。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-landmark text-iberian-gold mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">國營旅館亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">入住隆達國營旅館 <strong class="text-amber-800">Parador de Ronda</strong>。💡 出門就是百米懸崖與新橋，晚上漫步看古橋打燈夜景無敵！</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-utensils text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">晚餐直接在國營旅館內享用精緻的安達魯西亞地方料理。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 8 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day8">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 8 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">市區五星商圈下樓即逛</span>
+                <button onclick="focusCity('granada')" class="text-xs text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-bus"></i> 拉車約 2.5 小時
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              隆達 → 格拉納達（阿爾罕布拉宮與夏宮花園）
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              參觀被譽為阿拉伯建築明珠的「阿爾罕布拉宮」，細細品味石膏蜂巢穹頂、獅子庭院與噴泉水渠所演繹的伊斯蘭黃金傳奇。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">市中心五星精選：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">入住 Meliá Granada 或 Barceló Carmen Granada 市區五星。💡 <strong class="text-slate-800">下樓就是熱鬧商圈、ZARA 與小吃酒館</strong>，自由度極高。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-drumstick-bite text-amber-700 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">中午或晚餐安排安達魯西亞著名的 <span class="font-bold text-amber-800">道地燉牛尾風味餐（Rabo de Toro）</span>。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 9 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden border-l-4 border-l-iberian-gold" id="card-day9">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 9 天</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">★ 托雷多古城國營旅館</span>
+                <button onclick="focusCity('toledo')" class="text-xs text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-route"></i> 格拉納達→哥多華約 2h15m ｜ 哥多華→托雷多約 2.5h
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              格拉納達 → 哥多華（百柱清真寺） → 托雷多古城
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              穿過哥多華清真寺 850 根紅白相間石柱的森林，感受伊斯蘭與天主教交融的建築奇觀。參觀完後繼續北上拉車抵達三面環水的托雷多古都。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-mountain-sun text-iberian-gold mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">國營旅館名所：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">入住托雷多國營旅館 <strong class="text-amber-800">Parador de Toledo</strong>。💡 蓋在山丘上，能將托雷多全景與護城河盡收眼底。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-palette text-slate-600 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">絕美視角：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">名畫《托雷多風景》同款取景山丘，傍晚夕陽灑落整座石城時如夢似幻。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== 階段三 ==================== -->
+    <section id="phase-3" class="scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b-2 border-iberian-olive gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-iberian-olive text-white flex items-center justify-center font-serif font-bold text-lg shadow-md">
+            03
+          </div>
+          <div>
+            <span class="text-xs font-bold tracking-widest text-iberian-olive uppercase">Stage 03</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-800">中部首都與加泰隆尼亞終點 <span class="text-base sm:text-lg font-normal text-slate-500">（第 10 - 13 天）</span></h2>
+          </div>
+        </div>
+        <div class="text-xs sm:text-sm text-slate-500 font-medium">
+          內陸飛機直飛・高第建築大滿貫・巴塞隆納 2 連泊
+        </div>
+      </div>
+
+      <!-- 體力特色提示框 (階段三) -->
+      <div class="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm flex items-start gap-3.5">
+        <div class="p-2.5 bg-iberian-olive text-white rounded-xl text-lg flex-shrink-0 mt-0.5 shadow-sm">
+          <i class="fa-solid fa-plane-departure"></i>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <span class="bg-emerald-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">體力評級：精力回充・效率極高</span>
+            <span class="text-xs text-emerald-800 font-semibold">【超舒緩神安排】</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-bold text-emerald-950 mt-1">
+            💡 告別漫長拉車，改搭內陸飛機輕鬆血拼！
+          </h3>
+          <p class="text-sm text-slate-600 mt-1 leading-relaxed">
+            馬德里到巴塞隆納距離超過 600 公里，一般遊覽車需搖晃拉車 6 小時以上。此處直接安排 <strong class="text-emerald-900">搭乘內陸飛機直飛</strong>，搭配巴塞隆納市區核心擴展區 2 連泊，省下整整半天體力，為最後的精品大道自由血拼保留最充沛的體力！
+          </p>
+        </div>
+      </div>
+
+      <!-- 階段三 每日卡片列表 -->
+      <div class="space-y-4">
+        <!-- 第 10 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day10">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 10 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">王國首都巡禮</span>
+                <button onclick="focusCity('madrid')" class="text-xs text-emerald-700 hover:text-emerald-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-bus"></i> 托雷多 → 馬德里約 1 小時（極為輕鬆）
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              托雷多 → 馬德里（王宮與美術館）
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              抵達西班牙首都馬德里，參觀奢華輝煌的馬德里王宮與世界頂尖藝術重鎮普拉多美術館，感受波旁王朝的帝國雍容氣象。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-utensils text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">於馬德里享用精緻的 <span class="font-bold text-iberian-clay">百年地窖香烤乳豬風味餐</span>，肉質幼嫩多汁、外皮喀脆爽口。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-olive mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">當晚住宿：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">馬德里市區精選五星飯店。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 11 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden border-l-4 border-l-emerald-600" id="card-day11">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 11 天</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">✈️ 內陸飛機直飛・巴塞 2 連泊</span>
+                <button onclick="focusCity('barcelona')" class="text-xs text-emerald-700 hover:text-emerald-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full font-bold">
+                <i class="fa-solid fa-plane"></i> 馬德里 ✈️ 巴塞隆納（不搭 6 小時長途巴士！）
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              馬德里 → ✈️ 改搭內陸班機 → 巴塞隆納
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              免除長途跋涉的疲倦，直接搭乘飛機快速飛往加泰隆尼亞首府巴塞隆納！下午擁有從容時光漫步在熱鬧的格拉西亞大道。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-hotel text-iberian-olive mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">住宿亮點（巴塞隆納 2 連泊）：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">開啟 <strong class="text-emerald-800">巴塞隆納 2 連泊</strong>，入住市區核心擴展區精選飯店（方便最後的自由血拼）。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-bag-shopping text-rose-500 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">自由活動：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">步行即可抵達名品街與米拉之家商圈，戰利品輕鬆放回飯店。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第 12、13 天 -->
+        <article class="trip-card bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden" id="card-day12">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-md">第 12 - 13 天</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">高第大滿貫・海鮮燉飯</span>
+                <button onclick="focusCity('barcelona')" class="text-xs text-emerald-700 hover:text-emerald-900 hover:underline inline-flex items-center gap-1 font-medium ml-2">
+                  <i class="fa-solid fa-location-dot"></i> 地圖定位
+                </button>
+              </div>
+              <div class="inline-flex items-center gap-1.5 text-xs text-stone-600 bg-stone-100 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-location-dot"></i> 市區專車與徒步漫遊
+              </div>
+            </div>
+
+            <h4 class="text-lg sm:text-xl font-bold font-serif text-slate-800 mb-2">
+              巴塞隆納高第建築大滿貫（聖家堂、奎爾公園入內） → 台北
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              入內朝聖曠世奇作「聖家堂」感受如同森林光柱的彩繪玻璃投射，在奎爾公園糖果屋長椅遠眺地中海。在濃郁西班牙滋味中告別精彩旅程。
+            </p>
+
+            <div class="card-details grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-100 text-sm">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-utensils text-iberian-clay mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">餐食亮點：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">完美的告別晚餐，享用最具代表性的 <span class="font-bold text-amber-600">地中海海鮮燉飯（Paella）</span> 與海鮮拼盤。</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-plane-departure text-slate-600 mt-1"></i>
+                <div>
+                  <span class="font-bold text-slate-700">歸賦台北：</span>
+                  <p class="text-slate-600 text-xs sm:text-sm mt-0.5">專車前往巴塞隆納機場，辦妥退稅手續，帶著滿滿感動返抵台北。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== 貼心全盤總整理表格 ==================== -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm">
+      <div class="text-center max-w-2xl mx-auto mb-8">
+        <span class="text-xs font-bold tracking-widest text-iberian-clay uppercase">Summary Table</span>
+        <h3 class="text-2xl sm:text-3xl font-serif font-bold text-slate-800 mt-1">一分鐘看懂：體力・車程與住宿佈局</h3>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">全方位通盤掌握每日重心，出門前心中有數最踏實</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs sm:text-sm border-collapse">
+          <thead>
+            <tr class="bg-stone-100 text-slate-700 border-b border-stone-200">
+              <th class="py-3 px-4 font-bold rounded-tl-xl">階段區間</th>
+              <th class="py-3 px-4 font-bold">天數</th>
+              <th class="py-3 px-4 font-bold">核心停留城市</th>
+              <th class="py-3 px-4 font-bold">車程負擔度</th>
+              <th class="py-3 px-4 font-bold">住宿亮點</th>
+              <th class="py-3 px-4 font-bold rounded-tr-xl">體力應對重點</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-100 text-slate-600">
+            <tr class="hover:bg-blue-50/40 transition">
+              <td class="py-3.5 px-4 font-bold text-iberian-navy">階段一：葡國舒緩期</td>
+              <td class="py-3.5 px-4 font-semibold">D2 - D5</td>
+              <td class="py-3.5 px-4">里斯本、歐比杜什、辛特拉、羅卡角</td>
+              <td class="py-3.5 px-4 text-emerald-700 font-medium">★☆☆☆☆ (輕鬆往返)</td>
+              <td class="py-3.5 px-4 font-medium text-slate-800">里斯本五星 3 連泊</td>
+              <td class="py-3.5 px-4">完全免搬大行李，從容調時差</td>
+            </tr>
+            <tr class="hover:bg-amber-50/40 transition">
+              <td class="py-3.5 px-4 font-bold text-iberian-clay">階段二：南部大長征</td>
+              <td class="py-3.5 px-4 font-semibold">D5 - D10</td>
+              <td class="py-3.5 px-4">塞維亞、隆達、格拉納達、托雷多</td>
+              <td class="py-3.5 px-4 text-rose-700 font-medium">★★★★☆ (D5 長達 4.5h)</td>
+              <td class="py-3.5 px-4 font-medium text-slate-800">隆達懸崖＋托雷多雙國營旅館</td>
+              <td class="py-3.5 px-4 text-rose-600 font-bold">D5 備輕便過夜包，天天換飯店</td>
+            </tr>
+            <tr class="hover:bg-emerald-50/40 transition">
+              <td class="py-3.5 px-4 font-bold text-iberian-olive">階段三：雙都與高第</td>
+              <td class="py-3.5 px-4 font-semibold">D10 - D13</td>
+              <td class="py-3.5 px-4">托雷多、馬德里、巴塞隆納</td>
+              <td class="py-3.5 px-4 text-emerald-700 font-medium">★☆☆☆☆ (飛機直飛免拉車)</td>
+              <td class="py-3.5 px-4 font-medium text-slate-800">巴塞隆納擴展區 2 連泊</td>
+              <td class="py-3.5 px-4">搭機省力，回血全力自由逛街</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-stone-900 text-stone-400 py-10 border-t border-stone-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center text-xs space-y-2">
+      <div class="flex items-center justify-center gap-2 text-stone-200 font-serif font-bold text-base mb-1">
+        <span>吉光旅遊</span>
+        <span class="text-iberian-gold">•</span>
+        <span>西葡 14 日行程通盤指南</span>
+      </div>
+      <p class="text-stone-400">貼心細節・精準車程・優雅穿梭伊比利半島千年風華</p>
+      <div class="pt-4 text-stone-500">
+        © 版權所有・建議配合正式行程手冊與行前說明會須知使用
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== 地圖與互動 JAVASCRIPT ==================== -->
+  <script>
+    // 城市座標與資訊資料庫
+    const CITY_DATA = {
+      lisbon: {
+        id: 'lisbon',
+        name: '里斯本 Lisbon',
+        stage: 'p1',
+        coords: [38.7223, -9.1393],
+        days: 'D2, D3, D4, D5',
+        color: '#1B2A4A',
+        icon: 'fa-hotel',
+        stay: 'Corinthia Hotel 或 Dom Pedro（3 連泊）',
+        drive: '機場至市區約 20-30 分鐘',
+        highlight: '正宗馬介休鱈魚風味餐、百年葡式法朵（Fado）晚宴秀'
+      },
+      obidos: {
+        id: 'obidos',
+        name: '歐比杜什 Óbidos',
+        stage: 'p1',
+        coords: [39.3621, -9.1571],
+        days: 'D3',
+        color: '#1B2A4A',
+        icon: 'fa-ring',
+        stay: '返回里斯本原房連泊',
+        drive: '里斯本往返單程約 1 小時 15 分鐘',
+        highlight: '白牆婚禮小鎮、巧克力杯櫻桃酒、地方特色風味餐'
+      },
+      sintra: {
+        id: 'sintra',
+        name: '辛特拉 & 羅卡角',
+        stage: 'p1',
+        coords: [38.7804, -9.4989],
+        days: 'D4',
+        color: '#1B2A4A',
+        icon: 'fa-compass',
+        stay: '返回里斯本原房連泊',
+        drive: '里斯本→辛特拉 40分 ｜ 辛特拉→羅卡角 25分',
+        highlight: '彩色佩納宮、羅卡角（歐陸最西端海蝕崖）'
+      },
+      marvao: {
+        id: 'marvao',
+        name: '馬爾旺 Marvão（途經）',
+        stage: 'p2',
+        coords: [39.3939, -7.3772],
+        days: 'D5 途經',
+        color: '#C85A32',
+        icon: 'fa-feather-pointed',
+        stay: '純短暫景點停留（當晚住塞維亞）',
+        drive: '橫跨西葡長程中繼點',
+        highlight: '葡國鷹巢之村、岩石制高點俯瞰壯麗平原邊界'
+      },
+      seville: {
+        id: 'seville',
+        name: '塞維亞 Seville',
+        stage: 'p2',
+        coords: [37.3891, -5.9845],
+        days: 'D5, D6',
+        color: '#C85A32',
+        icon: 'fa-fire-flame-curved',
+        stay: '市區頂級飯店（2 晚，南部唯一不搬行李日）',
+        drive: 'D5 最長拉車高達 4.5 小時（備過夜包）',
+        highlight: '塞維亞大教堂入內、西班牙廣場、★佛朗明哥舞蹈晚宴秀'
+      },
+      ronda: {
+        id: 'ronda',
+        name: '隆達 Ronda',
+        stage: 'p2',
+        coords: [36.7462, -5.1612],
+        days: 'D7',
+        color: '#C85A32',
+        icon: 'fa-mountain',
+        stay: '隆達國營旅館 Parador de Ronda（懸崖第一排）',
+        drive: '塞維亞至隆達約 2 小時',
+        highlight: '新橋百米峽谷夜景、國營旅館內享用精緻安達魯西亞地方餐'
+      },
+      granada: {
+        id: 'granada',
+        name: '格拉納達 Granada',
+        stage: 'p2',
+        coords: [37.1773, -3.5986],
+        days: 'D8',
+        color: '#C85A32',
+        icon: 'fa-chess-rook',
+        stay: 'Meliá 或 Barceló 市區五星（下樓即商圈）',
+        drive: '隆達至格拉納達約 2.5 小時',
+        highlight: '阿爾罕布拉宮與夏宮花園、道地燉牛尾風味餐（Rabo de Toro）'
+      },
+      cordoba: {
+        id: 'cordoba',
+        name: '哥多華 Córdoba',
+        stage: 'p2',
+        coords: [37.8882, -4.7794],
+        days: 'D9',
+        color: '#C85A32',
+        icon: 'fa-archway',
+        stay: '續往托雷多入住國營旅館',
+        drive: '格拉納達至哥多華約 2 小時 15 分鐘',
+        highlight: '世界遺產百柱大清真寺、猶太人街百花巷'
+      },
+      toledo: {
+        id: 'toledo',
+        name: '托雷多 Toledo',
+        stage: 'p2',
+        coords: [39.8628, -4.0273],
+        days: 'D9',
+        color: '#C85A32',
+        icon: 'fa-shield-halved',
+        stay: '托雷多國營旅館 Parador de Toledo',
+        drive: '哥多華至托雷多約 2.5 小時',
+        highlight: '山丘全景視野俯瞰三面環水古都，名畫《托雷多風景》同款取景'
+      },
+      madrid: {
+        id: 'madrid',
+        name: '馬德里 Madrid',
+        stage: 'p3',
+        coords: [40.4168, -3.7038],
+        days: 'D10',
+        color: '#2A724F',
+        icon: 'fa-crown',
+        stay: '馬德里市區精選五星飯店',
+        drive: '托雷多至馬德里僅約 1 小時',
+        highlight: '馬德里王宮、普拉多美術館、百年地窖香烤乳豬風味餐'
+      },
+      barcelona: {
+        id: 'barcelona',
+        name: '巴塞隆納 Barcelona',
+        stage: 'p3',
+        coords: [41.3879, 2.1699],
+        days: 'D11, D12, D13',
+        color: '#2A724F',
+        icon: 'fa-church',
+        stay: '市區核心擴展區精選飯店（2 連泊）',
+        drive: '✈️ 內陸飛機直飛（省下 6 小時大巴拉車！）',
+        highlight: '聖家堂入內、奎爾公園、地中海海鮮燉飯 Paella、格拉西亞大道血拼'
+      }
+    };
+
+    let map;
+    const markers = {};
+    let activeLayerGroups = [];
+
+    // 初始化 Leaflet 地圖
+    function initMap() {
+      // 建立地圖實例
+      map = L.map('routeMap', {
+        center: [39.3, -4.2],
+        zoom: 6,
+        scrollWheelZoom: false
+      });
+
+      // 載入優雅清楚的 CARTO Voyager 瓦片圖層
+	L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  	  maxZoom: 16,
+  	  attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+	}).addTo(map);
+
+      // 標註 Marker
+      Object.keys(CITY_DATA).forEach(key => {
+        const item = CITY_DATA[key];
+        
+        // 建立客製 HTML 圖示
+        const iconHtml = `
+          <div class="custom-marker" style="background-color: ${item.color}; width: 32px; height: 32px; font-size: 13px;">
+            <i class="fa-solid ${item.icon}"></i>
+          </div>
+        `;
+
+        const customIcon = L.divIcon({
+          html: iconHtml,
+          className: '',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          popupAnchor: [0, -18]
+        });
+
+        const marker = L.marker(item.coords, { icon: customIcon }).addTo(map);
+
+        // 客製 Popup 彈窗內容
+        const popupContent = `
+          <div class="w-64 sm:w-72 bg-white text-slate-800">
+            <div class="p-3 text-white flex items-center justify-between" style="background-color: ${item.color};">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-black/25">${item.days}</span>
+                <h4 class="font-bold text-sm sm:text-base mt-0.5">${item.name}</h4>
+              </div>
+              <i class="fa-solid ${item.icon} text-lg opacity-80"></i>
+            </div>
+            <div class="p-3 space-y-2 text-xs">
+              <div>
+                <span class="text-stone-400 font-semibold block">🏨 住宿佈局</span>
+                <span class="font-medium text-slate-700">${item.stay}</span>
+              </div>
+              <div>
+                <span class="text-stone-400 font-semibold block">🚍 車程／交通</span>
+                <span class="text-amber-800 font-medium">${item.drive}</span>
+              </div>
+              <div>
+                <span class="text-stone-400 font-semibold block">✨ 精華亮點</span>
+                <span class="text-slate-600">${item.highlight}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+        markers[key] = marker;
+      });
+
+      // 繪製各階段路徑線條
+      drawRoutes();
+    }
+
+    // 繪製路線軌跡
+    function drawRoutes() {
+      // 階段一：葡萄牙里斯本放射路線（海軍藍）
+      const stage1_lisbon_obidos = [
+        CITY_DATA.lisbon.coords,
+        CITY_DATA.obidos.coords
+      ];
+      const stage1_lisbon_sintra_roca = [
+        CITY_DATA.lisbon.coords,
+        [38.7804, -9.3900], // Sintra
+        CITY_DATA.sintra.coords, // Roca
+        CITY_DATA.lisbon.coords
+      ];
+
+      L.polyline(stage1_lisbon_obidos, {
+        color: '#1B2A4A',
+        weight: 3.5,
+        opacity: 0.85
+      }).addTo(map);
+
+      L.polyline(stage1_lisbon_sintra_roca, {
+        color: '#1B2A4A',
+        weight: 3.5,
+        opacity: 0.85
+      }).addTo(map);
+
+      // 階段二：跨國長征陸路路線（陶土紅）
+      const stage2_route = [
+        CITY_DATA.lisbon.coords,
+        CITY_DATA.marvao.coords,
+        CITY_DATA.seville.coords,
+        CITY_DATA.ronda.coords,
+        CITY_DATA.granada.coords,
+        CITY_DATA.cordoba.coords,
+        CITY_DATA.toledo.coords,
+        CITY_DATA.madrid.coords
+      ];
+
+      L.polyline(stage2_route, {
+        color: '#C85A32',
+        weight: 4,
+        opacity: 0.9,
+        lineJoin: 'round'
+      }).addTo(map);
+
+      // 階段三：馬德里至巴塞隆納 ✈️ 內陸飛行路徑（綠色虛線動畫）
+      // 使用弧線模擬真實航線
+      const flightArc = [
+        CITY_DATA.madrid.coords,
+        [41.0, -0.6], // 航線弧頂
+        CITY_DATA.barcelona.coords
+      ];
+
+      const flightPath = L.polyline(flightArc, {
+        color: '#2A724F',
+        weight: 3.5,
+        dashArray: '8, 8',
+        className: 'flight-path'
+      }).addTo(map);
+
+      flightPath.bindTooltip('✈️ 內陸班機直飛（免 6 小時大巴）', {
+        permanent: false,
+        direction: 'center',
+        className: 'bg-emerald-800 text-white text-xs font-bold px-2 py-1 rounded shadow'
+      });
+    }
+
+    // 視角縮放控制
+    function zoomToStage(stage) {
+      // 切換按鈕激活狀態
+      document.querySelectorAll('.map-view-btn').forEach(btn => {
+        if (btn.getAttribute('data-stage') === stage) {
+          btn.classList.add('ring-2', 'ring-iberian-gold');
+        } else {
+          btn.classList.remove('ring-2', 'ring-iberian-gold');
+        }
+      });
+
+      if (stage === 'all') {
+        map.flyToBounds([
+          [36.2, -9.8],
+          [42.2, 3.2]
+        ], { padding: [30, 30], duration: 1.2 });
+      } else if (stage === 'p1') {
+        map.flyToBounds([
+          CITY_DATA.lisbon.coords,
+          CITY_DATA.obidos.coords,
+          CITY_DATA.sintra.coords
+        ], { padding: [50, 50], maxZoom: 9, duration: 1 });
+      } else if (stage === 'p2') {
+        map.flyToBounds([
+          CITY_DATA.seville.coords,
+          CITY_DATA.ronda.coords,
+          CITY_DATA.granada.coords,
+          CITY_DATA.toledo.coords,
+          CITY_DATA.marvao.coords
+        ], { padding: [40, 40], duration: 1.1 });
+      } else if (stage === 'p3') {
+        map.flyToBounds([
+          CITY_DATA.madrid.coords,
+          CITY_DATA.barcelona.coords
+        ], { padding: [60, 60], duration: 1.2 });
+      }
+    }
+
+    // 行程卡片上的地圖定位功能
+    function focusCity(cityId) {
+      const city = CITY_DATA[cityId];
+      if (!city || !map) return;
+
+      // 平滑飛向該城市
+      map.flyTo(city.coords, 9, {
+        animate: true,
+        duration: 1
+      });
+
+      // 開啟對應彈窗
+      setTimeout(() => {
+        if (markers[cityId]) {
+          markers[cityId].openPopup();
+        }
+      }, 1000);
+
+      // 滑動至地圖區域（若在手機上看不到地圖）
+      const mapElement = document.getElementById('routeMap');
+      const rect = mapElement.getBoundingClientRect();
+      if (rect.top < 0 || rect.bottom > window.innerHeight) {
+        mapElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // 頁面載入後初始化
+    window.onload = function() {
+      initMap();
+
+      // 導覽列滾動監聽
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.phase-nav-btn');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        const scrollPosition = window.scrollY + 140;
+
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === `#${current}`) {
+            link.classList.add('bg-stone-100', 'text-iberian-clay', 'font-bold');
+            link.classList.remove('text-slate-600');
+          } else {
+            link.classList.remove('bg-stone-100', 'text-iberian-clay', 'font-bold');
+            link.classList.add('text-slate-600');
+          }
+        });
+      });
+
+      // 展開 / 收合全部細節功能
+      const toggleAllBtn = document.getElementById('toggleAllBtn');
+      let isCollapsed = false;
+
+      if (toggleAllBtn) {
+        toggleAllBtn.addEventListener('click', () => {
+          isCollapsed = !isCollapsed;
+          const detailsBlocks = document.querySelectorAll('.card-details');
+          
+          detailsBlocks.forEach(block => {
+            block.style.display = isCollapsed ? 'none' : 'grid';
+          });
+
+          toggleAllBtn.innerHTML = isCollapsed 
+            ? '<i class="fa-solid fa-expand text-iberian-clay"></i> 展開所有細節內容' 
+            : '<i class="fa-solid fa-arrows-up-down text-iberian-clay"></i> 精簡每日卡片';
+        });
+      }
+    };
+  </script>
+</body>
+</html>
