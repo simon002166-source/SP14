@@ -144,11 +144,28 @@
       border-radius: 16px;
       padding: 0;
       overflow: hidden;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
+      border: 1px solid #e2e8f0;
     }
     .leaflet-popup-content {
       margin: 0 !important;
       font-family: 'Noto Sans TC', sans-serif;
+    }
+    .popup-img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 130px;
+      overflow: hidden;
+      background: #1e293b;
+    }
+    .popup-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .popup-img:hover {
+      transform: scale(1.08);
     }
     /* 航線動態虛線特效 */
     @keyframes dashMove {
@@ -1193,6 +1210,7 @@
         day: 'Day 2',
         coords: [39.3621, -9.1571],
         icon: 'fa-ring',
+        img: 'https://images.unsplash.com/photo-1590483866896-1215b22b7dc0?w=600&auto=format&fit=crop&q=80',
         desc: '紅瓦白牆石頭砌成的王后領地童話小鎮，嚐巧克力杯櫻桃酒。'
       },
       belem_tower: {
@@ -1203,6 +1221,7 @@
         day: 'Day 2, 4',
         coords: [38.6916, -9.2160],
         icon: 'fa-shield-halved',
+        img: 'https://images.unsplash.com/photo-1509803874385-db7c23652552?w=600&auto=format&fit=crop&q=80',
         desc: '太加斯河口的防禦堡壘，曼努埃爾風格傑作與世界文化遺產。'
       },
       monument_discoveries: {
@@ -1213,6 +1232,7 @@
         day: 'Day 2, 4',
         coords: [38.6936, -9.2057],
         icon: 'fa-sailboat',
+        img: 'https://images.unsplash.com/photo-1589307004173-3c95204d00ee?w=600&auto=format&fit=crop&q=80',
         desc: '高達 52 公尺的白色帆船造型，雕刻亨利王子等航海探險先鋒。'
       },
       hotel_lisbon: {
@@ -1223,6 +1243,7 @@
         day: 'Day 2-4 (3連泊)',
         coords: [38.7368, -9.1685],
         icon: 'fa-bed',
+        img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop&q=80',
         desc: '里斯本市區精選五星飯店，連續入住 3 晚免搬大行李。'
       },
       pena_palace: {
@@ -1233,6 +1254,7 @@
         day: 'Day 3',
         coords: [38.7876, -9.3906],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1548707309-dcebeab9ea9b?w=600&auto=format&fit=crop&q=80',
         desc: '矗立於山巔的浪漫主義童話宮殿，融合摩爾式與新哥德鮮明色彩。'
       },
       sintra_town: {
@@ -1243,6 +1265,7 @@
         day: 'Day 3',
         coords: [38.7992, -9.3886],
         icon: 'fa-tree',
+        img: 'https://images.unsplash.com/photo-1594873604892-7598c0b29fb7?w=600&auto=format&fit=crop&q=80',
         desc: '英國詩人拜倫讚嘆的「人間伊甸園」，歷代皇室避暑勝地。'
       },
       cabo_da_roca: {
@@ -1253,7 +1276,8 @@
         day: 'Day 3',
         coords: [38.7804, -9.4989],
         icon: 'fa-compass',
-        desc: '歐亞大陸最西端海岬，面朝浩瀚大西洋，立有「陸止於此，海始於斯」紀念石碑。'
+        img: 'https://images.unsplash.com/photo-1596701062351-8c2c14d1fdd0?w=600&auto=format&fit=crop&q=80',
+        desc: '歐亞大陸最西端海岬，面朝浩瀚大西洋，立有「陸止於此，海始於斯」石碑。'
       },
       fado_show: {
         id: 'fado_show',
@@ -1263,6 +1287,7 @@
         day: 'Day 3',
         coords: [38.7118, -9.1302],
         icon: 'fa-music',
+        img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80',
         desc: '聯合國非物質文化遺產，傳統葡式吉他與靈魂怨曲命運晚宴秀。'
       },
       jeronimos_monastery: {
@@ -1273,6 +1298,7 @@
         day: 'Day 4',
         coords: [38.6979, -9.2067],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=600&auto=format&fit=crop&q=80',
         desc: '入內參觀！曼努埃爾建築代表作，達伽馬長眠於此的世界文化遺產。'
       },
       praca_comercio: {
@@ -1283,6 +1309,7 @@
         day: 'Day 4',
         coords: [38.7075, -9.1364],
         icon: 'fa-monument',
+        img: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=600&auto=format&fit=crop&q=80',
         desc: '太加斯河畔宏偉壯闊的黃色拱門廣場，里斯本經典門面。'
       },
       fatima: {
@@ -1293,6 +1320,7 @@
         day: 'Day 5',
         coords: [39.6321, -8.6732],
         icon: 'fa-cross',
+        img: 'https://images.unsplash.com/photo-1548625361-04289895240d?w=600&auto=format&fit=crop&q=80',
         desc: '世界三大天主教朝聖地，聖母顯現之地，宏偉的白色大教堂與燭光廣場。'
       },
       marvao: {
@@ -1303,6 +1331,7 @@
         day: 'Day 5',
         coords: [39.3939, -7.3772],
         icon: 'fa-feather-pointed',
+        img: 'https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=600&auto=format&fit=crop&q=80',
         desc: '「鷹巢之村」，千米峭壁上的中世紀巨石要塞，360度俯瞰西葡交界。'
       },
       hotel_marvao: {
@@ -1313,6 +1342,7 @@
         day: 'Day 5',
         coords: [39.3948, -7.3762],
         icon: 'fa-bed',
+        img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&auto=format&fit=crop&q=80',
         desc: '古山城特色宿坊，今晚大行李置車上，備輕便過夜包入住！'
       },
 
@@ -1325,6 +1355,7 @@
         day: 'Day 6',
         coords: [38.9157, -6.3385],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=600&auto=format&fit=crop&q=80',
         desc: '西元前 18 年建立之羅馬帝國遺產，保存精美大理石立柱。'
       },
       flamenco_show: {
@@ -1335,6 +1366,7 @@
         day: 'Day 6',
         coords: [37.3881, -5.9902],
         icon: 'fa-fan',
+        img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
         desc: '安達魯西亞魂！吉他、激昂歌聲與震撼跺腳的世界非遺表演。'
       },
       hotel_seville: {
@@ -1345,6 +1377,7 @@
         day: 'Day 6',
         coords: [37.3912, -5.9754],
         icon: 'fa-bed',
+        img: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&auto=format&fit=crop&q=80',
         desc: '塞維亞市區頂級飯店，享受安達魯西亞優雅夜色。'
       },
       plaza_espana_seville: {
@@ -1355,6 +1388,7 @@
         day: 'Day 7',
         coords: [37.3772, -5.9869],
         icon: 'fa-monument',
+        img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=600&auto=format&fit=crop&q=80',
         desc: '摩爾復興風格巔峰之作，半圓形運河、橋樑與行省彩瓷長椅壁畫。'
       },
       seville_cathedral: {
@@ -1365,6 +1399,7 @@
         day: 'Day 7',
         coords: [37.3858, -5.9931],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=600&auto=format&fit=crop&q=80',
         desc: '世界最大哥德式教堂，入內參觀哥倫布靈柩與高聳希拉達鐘樓。'
       },
       ronda_bridge: {
@@ -1375,6 +1410,7 @@
         day: 'Day 7',
         coords: [36.7408, -5.1660],
         icon: 'fa-archway',
+        img: 'https://images.unsplash.com/photo-1549144511-f099e773c147?w=600&auto=format&fit=crop&q=80',
         desc: '橫跨太加斯百米深淵峽谷之壯麗石橋，隆達標誌景觀。'
       },
       hotel_ronda_parador: {
@@ -1385,6 +1421,7 @@
         day: 'Day 7',
         coords: [36.7415, -5.1663],
         icon: 'fa-hotel',
+        img: 'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=600&auto=format&fit=crop&q=80',
         desc: '懸崖第一排歷史名宿，坐擁新橋峽谷夜景，享用主廚晚餐！'
       },
       setenil: {
@@ -1395,6 +1432,7 @@
         day: 'Day 8',
         coords: [36.8639, -5.1812],
         icon: 'fa-mountain',
+        img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&auto=format&fit=crop&q=80',
         desc: '巧妙依傍懸崖巨岩而建的白色村莊，巨石直接作為房舍屋頂！'
       },
       alhambra: {
@@ -1405,6 +1443,7 @@
         day: 'Day 8',
         coords: [37.1760, -3.5881],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1568454537842-d933259bb258?w=600&auto=format&fit=crop&q=80',
         desc: '世界遺產！摩爾阿拉伯伊斯蘭藝術極致，蜂巢拱頂與獅子中庭。'
       },
       generalife: {
@@ -1415,6 +1454,7 @@
         day: 'Day 8',
         coords: [37.1776, -3.5852],
         icon: 'fa-tree',
+        img: 'https://images.unsplash.com/photo-1563298723-dcfebaa392e3?w=600&auto=format&fit=crop&q=80',
         desc: '蘇丹避暑夏宮，流水水渠與常青樹籬編織出阿拉伯綠洲狂想。'
       },
       cordoba_mezquita: {
@@ -1425,6 +1465,7 @@
         day: 'Day 9',
         coords: [37.8789, -4.7794],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&auto=format&fit=crop&q=80',
         desc: '入內朝聖！紅白相間 850 根圓柱拱門森林，伊斯蘭與天主教共存。'
       },
       cordoba_flowers: {
@@ -1435,6 +1476,7 @@
         day: 'Day 9',
         coords: [37.8797, -4.7797],
         icon: 'fa-fan',
+        img: 'https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=600&auto=format&fit=crop&q=80',
         desc: '白牆懸掛藍色花盆與繽紛天竺葵，窄巷端景巧妙框住清真寺鐘樓。'
       },
       consuegra_windmills: {
@@ -1445,6 +1487,7 @@
         day: 'Day 9',
         coords: [39.4533, -3.6067],
         icon: 'fa-wind',
+        img: 'https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?w=600&auto=format&fit=crop&q=80',
         desc: '《唐吉訶德》決鬥巨人的名著場景，山丘稜線上 12 座經典白色風車。'
       },
       toledo_cathedral: {
@@ -1455,6 +1498,7 @@
         day: 'Day 9',
         coords: [39.8571, -4.0244],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=600&auto=format&fit=crop&q=80',
         desc: '西班牙哥德式大主教首席大教堂，珍藏葛雷柯與哥雅等大師名畫。'
       },
       hotel_toledo_parador: {
@@ -1465,6 +1509,7 @@
         day: 'Day 9',
         coords: [39.8488, -4.0253],
         icon: 'fa-hotel',
+        img: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&auto=format&fit=crop&q=80',
         desc: '坐落古城對面山丘，名畫《托雷多風景》同款取景角，俯瞰全景！'
       },
 
@@ -1477,6 +1522,7 @@
         day: 'Day 10',
         coords: [40.9481, -4.1184],
         icon: 'fa-archway',
+        img: 'https://images.unsplash.com/photo-1564053489984-317bbd82433e?w=600&auto=format&fit=crop&q=80',
         desc: '全長 728 公尺、167 個雙層花崗岩拱門，屹立兩千年未使用水泥。'
       },
       madrid_palace: {
@@ -1487,6 +1533,7 @@
         day: 'Day 10',
         coords: [40.4179, -3.7143],
         icon: 'fa-crown',
+        img: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&auto=format&fit=crop&q=80',
         desc: '波旁王朝華麗皇室宮殿，僅次於凡爾賽宮之歐洲第三大皇宮。'
       },
       hotel_madrid: {
@@ -1497,6 +1544,7 @@
         day: 'Day 10',
         coords: [40.4358, -3.6896],
         icon: 'fa-bed',
+        img: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&auto=format&fit=crop&q=80',
         desc: '馬德里卡斯蒂利亞大道五星級飯店，優雅帝都風範。'
       },
       prado_museum: {
@@ -1507,6 +1555,7 @@
         day: 'Day 11',
         coords: [40.4138, -3.6921],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop&q=80',
         desc: '世界四大美術館之一，西班牙王室豪奢館藏：委拉斯開茲、哥雅與耶羅尼米斯。'
       },
       flight_madrid_bcn: {
@@ -1517,6 +1566,7 @@
         day: 'Day 11',
         coords: [40.4983, -3.5676],
         icon: 'fa-plane',
+        img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop&q=80',
         desc: '搭機直飛 1h25m，省去 6 小時大巴拉車之苦！'
       },
       barcelona_eixample: {
@@ -1527,6 +1577,7 @@
         day: 'Day 11',
         coords: [41.3934, 2.1643],
         icon: 'fa-bag-shopping',
+        img: 'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=600&auto=format&fit=crop&q=80',
         desc: '巴塞隆納核心名品大道，精品店林立，高第建築競豔勝地。'
       },
       hotel_barcelona: {
@@ -1537,6 +1588,7 @@
         day: 'Day 11-12 (2連泊)',
         coords: [41.3732, 2.1523],
         icon: 'fa-bed',
+        img: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&auto=format&fit=crop&q=80',
         desc: '市區五星級 2 連泊，戰利品輕鬆放回飯店，最充裕的自由時光。'
       },
       sagrada_familia: {
@@ -1547,6 +1599,7 @@
         day: 'Day 12',
         coords: [41.4036, 2.1744],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1583779457094-0cef7bad1b62?w=600&auto=format&fit=crop&q=80',
         desc: '入內參觀！高第驚世神作，唯一尚未完工即列世界遺產之森之光廊巨構。'
       },
       park_guell: {
@@ -1557,6 +1610,7 @@
         day: 'Day 12',
         coords: [41.4145, 2.1527],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1561632669-7f55f7975606?w=600&auto=format&fit=crop&q=80',
         desc: '入內參觀！波浪長椅繽紛馬賽克瓷磚、糖果屋門房與俯瞰巴塞隆納全景。'
       },
       casa_mila: {
@@ -1567,6 +1621,7 @@
         day: 'Day 12',
         coords: [41.3954, 2.1619],
         icon: 'fa-building',
+        img: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&auto=format&fit=crop&q=80',
         desc: '高第最後私人住宅設計，波浪白石立面與天台外星武士煙囪。'
       },
       casa_batllo: {
@@ -1577,6 +1632,7 @@
         day: 'Day 12',
         coords: [41.3917, 2.1649],
         icon: 'fa-dragon',
+        img: 'https://images.unsplash.com/photo-1579282240050-352db0a14c21?w=600&auto=format&fit=crop&q=80',
         desc: '巨龍脊柱屋頂與骨骼陽台，以聖喬治屠龍傳說為靈感之色彩魔幻建築。'
       },
       picasso_museum: {
@@ -1587,6 +1643,7 @@
         day: 'Day 13',
         coords: [41.3853, 2.1809],
         icon: 'fa-star',
+        img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80',
         desc: '入內參觀！珍藏立體派大師早年素描、油畫與《宮女》連作。'
       },
       rambla_columbus: {
@@ -1597,6 +1654,7 @@
         day: 'Day 13',
         coords: [41.3758, 2.1777],
         icon: 'fa-person-walking',
+        img: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=600&auto=format&fit=crop&q=80',
         desc: '地中海港口最繁華步道，哥倫布手指新大陸之雕像地標。'
       }
     };
@@ -1621,6 +1679,18 @@
       }
     }
 
+    // 安全清洗文字，避免 encodeURIComponent 遇到畸變字元引發 URI malformed
+    function safeCleanTitle(str) {
+      if (!str) return 'Scenic';
+      try {
+        // 去除開頭圖示符號與空白，只保留英數繁簡中文字元
+        const clean = str.replace(/^[^\w\u4e00-\u9fa5]+/gu, '').trim() || 'Spot';
+        return encodeURIComponent(clean);
+      } catch (e) {
+        return 'Spot';
+      }
+    }
+
     // 初始化 Leaflet 地圖
     function initMap() {
       map = L.map('routeMap', {
@@ -1635,7 +1705,7 @@
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
       }).addTo(map);
 
-      // 渲染所有景點 Marker
+      // 渲染所有景點 Marker（包含照片卡片彈窗）
       Object.keys(ALL_POIS).forEach(key => {
         const item = ALL_POIS[key];
         const style = getPOIMarkerStyle(item.type);
@@ -1663,14 +1733,32 @@
           ? '<span class="bg-slate-800 text-white px-2 py-0.5 rounded font-bold text-[10px]">🏨 住宿安排</span>'
           : '<span class="bg-sky-100 text-sky-900 px-2 py-0.5 rounded font-bold text-[10px]">▲ 精選景觀</span>';
 
+        const safeTitleParam = safeCleanTitle(item.name);
+        const fallbackUrl = `https://placehold.co/600x300/1e293b/d4af37?text=${safeTitleParam}`;
+
+        const photoHtml = item.img ? `
+          <div class="popup-img-wrapper">
+            <img 
+              src="${item.img}" 
+              alt="${item.name}" 
+              class="popup-img" 
+              loading="lazy" 
+              onerror="this.onerror=null;this.src='${fallbackUrl}';"
+            />
+            <span class="absolute top-2 left-2 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-black/60 text-white backdrop-blur-sm">
+              ${item.day}
+            </span>
+          </div>
+        ` : '';
+
+        const navQuery = safeTitleParam ? decodeURIComponent(safeTitleParam) : 'Spain';
+
         const popupContent = `
-          <div class="w-64 sm:w-72 bg-white text-slate-800">
+          <div class="w-64 sm:w-72 bg-white text-slate-800 overflow-hidden">
+            ${photoHtml}
             <div class="p-3 text-white flex items-center justify-between" style="background-color: ${style.bg};">
-              <div>
-                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-black/25">${item.day}</span>
-                <h4 class="font-bold text-sm sm:text-base mt-0.5">${item.name}</h4>
-              </div>
-              <i class="fa-solid ${iconClass} text-lg opacity-80"></i>
+              <h4 class="font-bold text-sm sm:text-base leading-tight">${item.name}</h4>
+              <i class="fa-solid ${iconClass} text-base opacity-85 ml-2 flex-shrink-0"></i>
             </div>
             <div class="p-3 space-y-2 text-xs">
               <div class="flex items-center justify-between">
@@ -1680,6 +1768,15 @@
               <div>
                 <span class="text-stone-400 font-bold block">景點說明</span>
                 <p class="text-slate-600 mt-0.5 leading-relaxed">${item.desc}</p>
+              </div>
+              <div class="pt-1 border-t border-stone-100">
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(navQuery)}+${item.coords[0]},${item.coords[1]}" 
+                  target="_blank" 
+                  class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-bold text-[11px]"
+                >
+                  <i class="fa-solid fa-diamond-turn-right text-blue-500"></i> 在 Google 地圖導航開啟
+                </a>
               </div>
             </div>
           </div>
