@@ -112,6 +112,22 @@
       cursor: pointer;
       margin: 2px 3px 2px 0;
     }
+    .poi-quick-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .poi-quick-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(0.95);
+    }
     .poi-btn-star {
       background-color: #FEF3C7;
       color: #92400E;
@@ -272,10 +288,85 @@
           💡 點擊下方行程卡片任一景點標籤，地圖會自動聚焦展開介紹
         </div>
       </div>
+    <!-- ==================== 動態聯動的快速景點總覽列 ==================== -->
+    <div class="bg-white px-3 py-2.5 border-b border-stone-200 overflow-x-auto no-scrollbar flex items-center gap-2 text-xs">
+      <span class="font-bold text-slate-700 whitespace-nowrap pl-1 pr-1 flex items-center gap-1 text-[11px] flex-shrink-0">
+        <i class="fa-solid fa-map-pin text-iberian-clay"></i> 快速導覽點：
+      </span>
+      
+      <!-- 葡萄牙 (Stage p1) -->
+      <button onclick="focusPOI('obidos')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p1">歐比多斯</button>
+      <button onclick="focusPOI('belem_tower')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p1">貝倫塔</button>
+      <button onclick="focusPOI('monument_discoveries')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p1">航海紀念碑</button>
+      <button onclick="focusPOI('hotel_lisbon')" class="poi-quick-btn poi-btn-hotel whitespace-nowrap" data-stage="p1">🏨 里斯本五星</button>
+      <button onclick="focusPOI('pena_palace')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p1">★ 佩納宮</button>
+      <button onclick="focusPOI('sintra_town')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p1">辛特拉古鎮</button>
+      <button onclick="focusPOI('cabo_da_roca')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p1">★ 羅卡角</button>
+      <button onclick="focusPOI('fado_show')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p1">★ 法朵秀</button>
+      <button onclick="focusPOI('jeronimos_monastery')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p1">★ 熱羅尼莫斯</button>
+      <button onclick="focusPOI('praca_comercio')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p1">商業廣場</button>
 
+      <!-- 西班牙南部 (Stage p2) -->
+      <button onclick="focusPOI('fatima')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p2">法蒂瑪聖殿</button>
+      <button onclick="focusPOI('marvao')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p2">馬爾旺山城</button>
+      <button onclick="focusPOI('hotel_marvao')" class="poi-quick-btn poi-btn-hotel whitespace-nowrap" data-stage="p2">🏨 馬爾旺旅館</button>
+      <button onclick="focusPOI('merida_theatre')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 梅里達劇場</button>
+      <button onclick="focusPOI('flamenco_show')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 佛朗明哥</button>
+      <button onclick="focusPOI('hotel_seville')" class="poi-quick-btn poi-btn-hotel whitespace-nowrap" data-stage="p2">🏨 塞維亞五星</button>
+      <button onclick="focusPOI('plaza_espana_seville')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p2">塞維亞廣場</button>
+      <button onclick="focusPOI('seville_cathedral')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 塞維亞大教堂</button>
+      <button onclick="focusPOI('ronda_bridge')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p2">隆達新橋</button>
+      <button onclick="focusPOI('hotel_ronda_parador')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 隆達國營</button>
+      <button onclick="focusPOI('setenil')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p2">岩石村</button>
+      <button onclick="focusPOI('alhambra')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 阿罕布拉宮</button>
+      <button onclick="focusPOI('generalife')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 夏宮花園</button>
+      <button onclick="focusPOI('cordoba_mezquita')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 哥多華清真寺</button>
+      <button onclick="focusPOI('cordoba_flowers')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p2">百花巷</button>
+      <button onclick="focusPOI('consuegra_windmills')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 白色風車村</button>
+      <button onclick="focusPOI('toledo_cathedral')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 托雷多大教堂</button>
+      <button onclick="focusPOI('hotel_toledo_parador')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p2">★ 托雷多國營</button>
+
+      <!-- 雙都直飛巴塞 (Stage p3) -->
+      <button onclick="focusPOI('segovia_aqueduct')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p3">水道橋</button>
+      <button onclick="focusPOI('madrid_palace')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p3">馬德里王宮</button>
+      <button onclick="focusPOI('hotel_madrid')" class="poi-quick-btn poi-btn-hotel whitespace-nowrap" data-stage="p3">🏨 馬德里洲際</button>
+      <button onclick="focusPOI('prado_museum')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p3">★ 普拉多美術館</button>
+      <button onclick="focusPOI('barcelona_eixample')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p3">格拉西亞大道</button>
+      <button onclick="focusPOI('hotel_barcelona')" class="poi-quick-btn poi-btn-hotel whitespace-nowrap" data-stage="p3">🏨 巴塞隆納洲際</button>
+      <button onclick="focusPOI('sagrada_familia')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p3">★ 聖家堂</button>
+      <button onclick="focusPOI('park_guell')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p3">★ 奎爾公園</button>
+      <button onclick="focusPOI('casa_mila')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p3">米拉之家</button>
+      <button onclick="focusPOI('casa_batllo')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p3">巴特婁之家</button>
+      <button onclick="focusPOI('picasso_museum')" class="poi-quick-btn poi-btn-star whitespace-nowrap" data-stage="p3">★ 畢卡索美術館</button>
+      <button onclick="focusPOI('rambla_columbus')" class="poi-quick-btn poi-btn-sight whitespace-nowrap" data-stage="p3">蘭布拉大道</button>
+    </div>
       <!-- 地圖容器 -->
       <div class="relative w-full h-[400px] sm:h-[480px] lg:h-[520px] bg-stone-100">
         <div id="routeMap" class="w-full h-full"></div>
+
+        <!-- 圖例 -->
+        <div class="absolute bottom-3 right-3 z-[500] bg-white/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-lg border border-stone-200 text-[11px] space-y-1 max-w-[210px] pointer-events-auto">
+          <div class="font-bold text-slate-800 border-b border-stone-200 pb-1 flex items-center justify-between">
+            <span>圖標類型</span>
+            <i class="fa-solid fa-layer-group text-slate-400"></i>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <span class="w-3 h-3 rounded-full bg-[#D97706] inline-flex items-center justify-center text-[8px] text-white font-bold"><i class="fa-solid fa-star"></i></span>
+            <span>★ 入內參觀名勝</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <span class="w-3 h-3 rounded-full bg-[#0284C7] inline-flex items-center justify-center text-[8px] text-white font-bold"><i class="fa-solid fa-camera"></i></span>
+            <span>▲ 精選外觀景致</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <span class="w-3 h-3 rounded-full bg-[#1E293B] inline-flex items-center justify-center text-[8px] text-white font-bold"><i class="fa-solid fa-hotel"></i></span>
+            <span>🏨 國營旅館／五星美宿</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600 pt-0.5 border-t border-stone-100">
+            <span class="w-4 h-0.5 border-t-2 border-dashed border-[#2A724F] inline-block"></span>
+            <span class="font-semibold text-emerald-800">✈️ 馬德里直飛巴塞</span>
+          </div>
+        </div>
       </div>
 
       <!-- 水平快速跳轉標籤 (Day 1 - Day 14) -->
@@ -1730,7 +1821,7 @@
         const navQuery = safeTitleParam ? decodeURIComponent(safeTitleParam) : 'Spain';
 
         const popupContent = `
-          <div class="w-90 sm:w-106 bg-white text-slate-800 overflow-hidden">
+          <div class="w-64 sm:w-72 bg-white text-slate-800 overflow-hidden">
             ${photoHtml}
             <div class="p-3 text-white flex items-center justify-between" style="background-color: ${style.bg};">
               <h4 class="font-bold text-sm sm:text-base leading-tight">${item.name}</h4>
@@ -1871,7 +1962,9 @@
     }
 
     // 地圖大區域視角切換控制
+    // 地圖大區域視角切換控制 (同步連動下方快速導覽點篩選)
     function zoomToStage(stage) {
+      // 切換上方檢視按鈕的高亮外框
       document.querySelectorAll('.map-view-btn').forEach(btn => {
         if (btn.getAttribute('data-stage') === stage) {
           btn.classList.add('ring-2', 'ring-iberian-gold');
@@ -1880,6 +1973,17 @@
         }
       });
 
+      // 動態顯示或隱藏下方快速導覽點
+      document.querySelectorAll('.poi-quick-btn').forEach(btn => {
+        const btnStage = btn.getAttribute('data-stage');
+        if (stage === 'all' || btnStage === stage) {
+          btn.style.display = 'inline-flex';
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+
+      // 地圖移動與縮放視角
       if (stage === 'all') {
         map.flyToBounds([
           [36.0, -9.8],
